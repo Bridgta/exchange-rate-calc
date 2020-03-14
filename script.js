@@ -7,15 +7,34 @@ const rateEl = document.getElementById("rate");
 const swap = document.getElementById("swap");
 
 //fetch ex rates and update dom el
-function calaculate() {
-    console.log("ran");
+function caclulate() {
+    const currency_one = currencyEl_one.value;
+    const currency_two = currencyEl_two.value;
+
+    fetch(`https://api.exchangerate-api.com/v4/latest/${currency_one}`)
+        .then(res => res.json())
+        .then(data => {
+            // console.log(data);
+            const rate = data.rates[currency_two];
+
+            rateEl.innerText = `1 ${currency_one} = ${rate} ${currency_two}`;
+
+            amountEl_two.value = (amountEl_one.value * rate).toFixed(2);
+        });
 }
 
 //event listeners
 
-currencyEl_one.addEventListener("change", calaculate);
-amountEl_one.addEventListener("input", calaculate);
-currencyEl_two.addEventListener("change", calaculate);
-amountEl_one.addEventListener("input", calaculate);
+currencyEl_one.addEventListener("change", caclulate);
+amountEl_one.addEventListener("input", caclulate);
+currencyEl_two.addEventListener("change", caclulate);
+amountEl_two.addEventListener("input", caclulate);
 
-calaculate();
+swap.addEventListener("click", () => {
+    const temp = currencyEl_one.value;
+    currencyEl_one.value = currencyEl_two.value;
+    currencyEl_two.value = temp;
+    caclulate();
+});
+
+caclulate();
